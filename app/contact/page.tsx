@@ -298,9 +298,12 @@ export default function ContactPage() {
                 <p className="text-white/90 text-sm mb-4">
                   Check our FAQ section for instant answers to common questions.
                 </p>
-                <Button variant="secondary" className="bg-white text-blue-600 hover:bg-gray-100" asChild>
-                  <Link href="/#faq">View FAQ</Link>
-                </Button>
+                <a 
+                  href="/faq" 
+                  className="inline-flex items-center justify-center bg-white text-blue-600 hover:bg-gray-100 px-4 py-2 rounded-md font-medium transition-colors"
+                >
+                  View FAQ
+                </a>
               </CardContent>
             </Card>
           </div>
