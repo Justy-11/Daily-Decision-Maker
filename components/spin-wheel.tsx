@@ -1,11 +1,17 @@
 "use client"
 
-import { useState } from "react"
-import { Wheel } from "react-custom-roulette"
+import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { RotateCcw, Edit, Save, Plus, Trash2 } from "lucide-react"
+
+// CHANGED: Dynamic import to avoid SSR issues
+const Wheel = dynamic(() => import("react-custom-roulette").then(mod => ({ default: mod.Wheel })), {
+  ssr: false,
+  loading: () => <div className="w-64 h-64 rounded-full border-8 border-gray-800 bg-gray-200 animate-pulse flex items-center justify-center">Loading...</div>
+})
 
 const defaultOptions = [
   "Go Out 🚗",
@@ -29,8 +35,15 @@ export default function SpinWheel({ isActive, onDecision }: SpinWheelProps) {
   const [result, setResult] = useState<string>("")
   const [isEditing, setIsEditing] = useState(false)
   const [editOptions, setEditOptions] = useState(defaultOptions)
+  // CHANGED: Added state to track if component is mounted
+  const [isMounted, setIsMounted] = useState(false)
   const [mustSpin, setMustSpin] = useState(false)
   const [prizeNumber, setPrizeNumber] = useState(0)
+
+  // CHANGED: Ensure component is mounted before rendering wheel
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const wheelData = options.map((option, index) => ({
     option: option,
@@ -88,23 +101,26 @@ export default function SpinWheel({ isActive, onDecision }: SpinWheelProps) {
       <CardContent className="space-y-6">
         <div className="flex justify-center">
           <div className="relative">
-            <Wheel
-              mustStartSpinning={mustSpin}
-              prizeNumber={prizeNumber}
-              data={wheelData}
-              onStopSpinning={handleSpinComplete}
-              backgroundColors={["#3e3e3e", "#df3428"]}
-              textColors={["#ffffff"]}
-              outerBorderColor="#333"
-              outerBorderWidth={8}
-              innerBorderColor="#fff"
-              innerBorderWidth={2}
-              radiusLineColor="#fff"
-              radiusLineWidth={2}
-              fontSize={options.length > 12 ? 12 : options.length > 8 ? 14 : 16}
-              textDistance={60}
-              spinDuration={0.3}
-            />
+            {/* CHANGED: Only render Wheel when component is mounted */}
+            {isMounted && (
+              <Wheel
+                mustStartSpinning={mustSpin}
+                prizeNumber={prizeNumber}
+                data={wheelData}
+                onStopSpinning={handleSpinComplete}
+                backgroundColors={["#3e3e3e", "#df3428"]}
+                textColors={["#ffffff"]}
+                outerBorderColor="#333"
+                outerBorderWidth={8}
+                innerBorderColor="#fff"
+                innerBorderWidth={2}
+                radiusLineColor="#fff"
+                radiusLineWidth={2}
+                fontSize={options.length > 12 ? 12 : options.length > 8 ? 14 : 16}
+                textDistance={60}
+                spinDuration={0.3}
+              />
+            )}
           </div>
         </div>
 
