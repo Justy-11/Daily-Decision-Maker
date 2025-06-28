@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef } from "react"
+import confetti from "canvas-confetti"
 import Header from "@/components/header"
 import FoodGenerator from "@/components/food-generator"
 import MoviePicker from "@/components/movie-picker"
@@ -18,8 +19,6 @@ const generators = ["food", "movie", "wheel", "thisorthat", "magicball", "challe
 
 export default function HomePage() {
   const [activeGenerator, setActiveGenerator] = useState<string | null>(null)
-  const [showConfetti, setShowConfetti] = useState(false)
-
   const foodRef = useRef<HTMLDivElement>(null)
   const movieRef = useRef<HTMLDivElement>(null)
   const wheelRef = useRef<HTMLDivElement>(null)
@@ -29,8 +28,12 @@ export default function HomePage() {
   const weekendRef = useRef<HTMLDivElement>(null)
 
   const triggerConfetti = () => {
-    setShowConfetti(true)
-    setTimeout(() => setShowConfetti(false), 3000)
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#ff00ff", "#00ffff"],
+    })
   }
 
   const randomGenerator = () => {
@@ -38,7 +41,6 @@ export default function HomePage() {
     setActiveGenerator(randomGen)
     triggerConfetti()
 
-    // Scroll to the activated generator
     setTimeout(() => {
       let targetRef
       switch (randomGen) {
@@ -76,25 +78,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 dark:from-purple-900 dark:via-pink-900 dark:to-red-900">
-      {/* Confetti Animation */}
-      {showConfetti && (
-        <div className="fixed inset-0 pointer-events-none z-50">
-          {[...Array(50)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute animate-bounce"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 2}s`,
-                animationDuration: `${1 + Math.random() * 2}s`,
-              }}
-            >
-              🎉
-            </div>
-          ))}
-        </div>
-      )}
 
       {/* Theme Toggle */}
       <div className="absolute top-4 right-4 z-40">
